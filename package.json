@@ -1,0 +1,45 @@
+{
+  "name": "react-native-show-more-bubbles",
+  "version": "0.1.0",
+  "description": "Show hide more bubbles component for react-native",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist/ && prettier --write src/ && npm run build:esm && npm run build:cjs && cp -R src/assets dist/cjs && cp -R src/assets dist/esm",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs"
+  },
+  "author": "sanju3",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.13.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-native": "^0.71.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "^0.71.3",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "^0.71.3"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "react-native-web",
+    "suggestion",
+    "show-more-items",
+    "react"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanju3/react-native-show-more-bubbles.git"
+  }
+}

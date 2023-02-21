@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "types": ["node", "react-native"],
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "outDir": "dist/esm",
+    "sourceMap": true,
+    "strict": true,
+    "jsx": "react",
+    "lib": ["ESNext", "DOM"],
+    "module": "ES6",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedParameters": true,
+    "target": "ES6"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
