@@ -1,6 +1,6 @@
 {
   "name": "react-native-show-more-bubbles",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Show hide more bubbles component for react-native",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

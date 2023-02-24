@@ -45,12 +45,10 @@ export interface MainProps {
   focusIcon?: NodeRequire;
   unFocusIcon?: NodeRequire;
   testID?: string;
+  bubbleStyles?: StyleProp<TextStyle>;
 }
-type VB = {
-  [key: string]: LayoutRectangle;
-};
 
-let visibleBubbles: VB = {};
+let visibleBubbles: Map<string, LayoutRectangle> = new Map();
 let textInput: TextInput | null = null;
 let clickCounter: number = 0;
 let eventListnerRef: EmitterSubscription;
@@ -73,7 +71,8 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
     suggestions,
     focusIcon,
     unFocusIcon,
-    testID
+    testID,
+    bubbleStyles
   } = props;
   const [focus, setFocus] = useState<boolean>(false);
   const [invisibleCount, setInvisibleCount] = useState<number>(preSelectedValues.length - 1);
@@ -102,7 +101,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
       eventListnerRef.remove();
       eventListnerRef = DeviceEventEmitter.addListener('unfocusBubble', unfocus);
     }
-    visibleBubbles = {};
+    visibleBubbles.clear();
     () => eventListnerRef.remove();
   }, []);
 
@@ -131,14 +130,15 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
   }, []);
 
   const handleInvisibleCount = (data: BubbleLayout) => {
-    const key = Object.keys(data)[0];
-    if (key && visibleBubbles[key]) {
-      const newBubble = { [key]: { ...data[key]!, width: visibleBubbles[key] ? visibleBubbles[key]!.width : data[key]!.width } };
-      visibleBubbles = { ...visibleBubbles, ...newBubble };
-    } else {
-      visibleBubbles = { ...visibleBubbles, ...data };
+    const key = Object.keys(data)[0] as string;
+    if (key && visibleBubbles.has(key)) {
+      const newBubble = { ...data[key]!, width: visibleBubbles.get(key)?.width ?? data[key]!.width };
+      visibleBubbles.set(key, newBubble);
+    } else if (data[key]) {
+      visibleBubbles.set(key, data[key]!);
     }
-    const min = Object.values(visibleBubbles).reduce((acc, cur) => {
+
+    const min = Array.from(visibleBubbles.values()).reduce((acc, cur) => {
       if (acc === 0) {
         return acc + cur.y;
       }
@@ -148,7 +148,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
       }
       return acc;
     }, 0);
-    const count = Object.values(visibleBubbles).reduce((acc, cur) => {
+    const count = Array.from(visibleBubbles.values()).reduce((acc, cur) => {
       if (cur.y === min) {
         return ++acc;
       }
@@ -206,7 +206,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
     let array = bubbleArray.filter((b) => b !== s);
     setBubbleArray(array);
     onChangeBubbles?.(array);
-    delete visibleBubbles[s];
+    visibleBubbles.delete(s);
     const tempSelectedValues = { ...selectedValues };
     tempSelectedValues[s] = undefined;
     setSelectedValues({ ...tempSelectedValues });
@@ -238,7 +238,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
   const renderBubbles = () => {
     return bubbleArray.map((bubble, index) => (
       <Fragment key={index}>
-        <Bubble text={bubble} bubbleCount={bubbleArray.length} focus={focus} removeBubble={remove} setInvisibleCount={handleInvisibleCount} />
+        <Bubble text={bubble} bubbleCount={bubbleArray.length} focus={focus} removeBubble={remove} setInvisibleCount={handleInvisibleCount} bubbleStyles={bubbleStyles} />
       </Fragment>
     ));
   };
@@ -263,7 +263,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
                 style={[
                   style.innerContainer,
                   {
-                    maxHeight: focus ? undefined : 50,
+                    maxHeight: focus ? undefined : 40,
                     width: !focus && invisibleCount > 0 ? '70%' : '100%'
                   }
                 ]}
@@ -273,7 +273,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
                   <TextInput
                     style={[style.input, inputStyles]}
                     placeholder={preSelectedValues.length === 0 ? inputPlaceholder || 'Enter some text...' : ''}
-                    placeholderTextColor={placeholderTextColor || '#BDBDBD'}
+                    placeholderTextColor={placeholderTextColor}
                     allowFontScaling={false}
                     onChangeText={handleOnChangeText}
                     value={text}
@@ -299,7 +299,7 @@ export const MainBubble: FunctionComponent<MainProps> = (props) => {
             </View>
             <View>
               {focus && (
-                <View style={[{ position: 'absolute', top: 0, width: '100%', borderColor: '#D6D6D7' }]}>
+                <View style={[{ position: 'absolute', top: 0, width: '100%', borderColor: '#D6D6D7', backgroundColor: 'white' }]}>
                   <View style={[text !== '' ? { maxHeight: 280 } : { maxHeight: 235 }, { width: '100%' }]}>
                     <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
                       {text !== '' && dropdownHeader && (
@@ -362,7 +362,7 @@ const style = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: 'white',
     borderColor: '#C4C4C4',
-    paddingLeft: 10,
+    paddingLeft: 5,
     paddingRight: 10,
     overflow: 'hidden',
     justifyContent: 'center'
@@ -370,11 +370,13 @@ const style = StyleSheet.create({
   innerContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    // alignItems: 'center',
+    paddingRight: 5
   },
   inputContainer: {
     flex: 1,
-    minWidth: 50
+    minWidth: 50,
+    marginLeft: 5
   },
   webInputContainer: {
     justifyContent: 'center',
@@ -384,7 +386,7 @@ const style = StyleSheet.create({
     borderColor: 'transparent',
     width: '100%',
     zIndex: 999999,
-    minHeight: 50
+    minHeight: 40
   },
   moreText: {
     color: '#787885',

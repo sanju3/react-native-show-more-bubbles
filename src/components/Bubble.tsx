@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef } from 'react';
+import React, { FunctionComponent, useMemo, useRef } from 'react';
 import { Animated, Image, LayoutRectangle, PanResponder, PanResponderInstance, Platform, ScrollView, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 export interface BubbleLayout {
@@ -30,8 +30,10 @@ export const Bubble: FunctionComponent<BubbleProps> = (props) => {
   const { text, setInvisibleCount, bubbleStyles, focus, removeBubble, bubbleCount } = props;
   const translateX = useRef<Animated.Value>(new Animated.Value(0)).current;
   let location = useRef<number>(0).current;
-  let panResponder = useRef<PanResponderInstance>(
-    PanResponder.create({
+  let panResponder = useMemo<PanResponderInstance>(() => {
+    location = 0;
+    translateX.setValue(0);
+    return PanResponder.create({
       onStartShouldSetPanResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderGrant: () => {
@@ -84,8 +86,9 @@ export const Bubble: FunctionComponent<BubbleProps> = (props) => {
           }
         }
       }
-    })
-  );
+    });
+  }, [text, focus]);
+
   return (
     <View onLayout={(e) => setInvisibleCount({ [text]: e.nativeEvent.layout })} style={[style.container, bubbleStyles, !focus && bubbleCount === 1 && { maxWidth: '70%' }]}>
       {focus ? (
@@ -110,7 +113,7 @@ export const Bubble: FunctionComponent<BubbleProps> = (props) => {
               };
             }}
           >
-            <Animated.View style={{ transform: [{ translateX: translateX }] }} {...panResponder.current.panHandlers}>
+            <Animated.View style={{ transform: [{ translateX: translateX }] }} {...panResponder.panHandlers}>
               <Text
                 style={style.textUnfocus}
                 selectable={false}
@@ -169,7 +172,8 @@ const style = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' || Platform.OS === 'android' ? 'Asap' : 'Asap, sans-serif',
     fontSize: 12,
     fontStyle: 'italic',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    flexWrap: 'wrap'
   },
   deleteIcon: {
     justifyContent: 'center',
