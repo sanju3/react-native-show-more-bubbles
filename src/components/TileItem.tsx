@@ -42,7 +42,9 @@ export const TileItem: FunctionComponent<TileItemProps> = (props) => {
 const style = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    zIndex: 9999
+    zIndex: 9999,
+    maxWidth: '100%',
+    alignItems: 'center'
   },
   icon: {
     width: 22,

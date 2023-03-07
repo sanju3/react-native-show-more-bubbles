@@ -1,6 +1,6 @@
 {
   "name": "react-native-show-more-bubbles",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Show hide more bubbles component for react-native",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -41,5 +41,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sanju3/react-native-show-more-bubbles.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/sanju3/react-native-show-more-bubbles/issues"
+  },
+  "homepage": "https://github.com/sanju3/react-native-show-more-bubbles#readme"
 }

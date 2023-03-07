@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { TextProps, StyleProp, Text, TextStyle } from 'react-native';
 import { separator } from '../utils';
 
@@ -20,7 +20,7 @@ export const Highlighter: FunctionComponent<HighlighterProps> = (props) => {
             {c}
           </Text>
         ) : (
-          <Fragment key={i}>{c}</Fragment>
+          <Text key={i}>{c}</Text>
         )
       )}
     </Text>
